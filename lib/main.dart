@@ -21,6 +21,16 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: "Convert Coint",
       home: Home(),
+      theme: ThemeData(
+          hintColor: Colors.amber,
+          primaryColor: Colors.white,
+          inputDecorationTheme: InputDecorationTheme(
+            enabledBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+            focusedBorder:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.amber)),
+            hintStyle: TextStyle(color: Colors.amber),
+          )),
     );
   }
 }
@@ -31,6 +41,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  double dolar;
+  double euro;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,9 +75,38 @@ class _HomeState extends State<Home> {
                     ),
                   );
                 }
-                return Container(color: Colors.green);
+                dolar = snapshot.data["results"]["currencies"]["USD"]["buy"];
+                euro = snapshot.data["results"]["currencies"]["EUR"]["buy"];
+                return SingleChildScrollView(
+                  padding: EdgeInsets.all(10.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Icon(Icons.monetization_on,
+                          size: 150.0, color: Colors.amber),
+                      buildTextField('Reais', "R\$"),
+                      Divider(),
+                      buildTextField('Dóloar', "US\$"),
+                      Divider(),
+                      buildTextField('Euro', "€"),
+                    ],
+                  ),
+                );
             }
           }),
     );
   }
+}
+
+Widget buildTextField(String label, String prefix) {
+  return TextField(
+    decoration: InputDecoration(
+      labelText: label,
+      labelStyle: TextStyle(color: Colors.amber),
+      prefixText: prefix,
+      prefixStyle: TextStyle(color: Colors.amber),
+      border: OutlineInputBorder(),
+    ),
+    style: TextStyle(color: Colors.amber, fontSize: 18.0),
+  );
 }
