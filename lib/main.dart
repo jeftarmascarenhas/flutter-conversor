@@ -52,6 +52,7 @@ class _HomeState extends State<Home> {
     realController.text = '';
     dolarController.text = '';
     euroController.text = '';
+    print('ClearALL');
   }
 
   void _fieldEmpty(String text) {
@@ -63,9 +64,9 @@ class _HomeState extends State<Home> {
 
   void _onChanged(String type, String text) {
     double value = double.parse(text);
+    _fieldEmpty(text);
     switch (type) {
       case 'real':
-        _fieldEmpty(text);
         dolarController.text = (value / dolar).toStringAsFixed(2);
         euroController.text = (value / euro).toStringAsFixed(2);
         break;
