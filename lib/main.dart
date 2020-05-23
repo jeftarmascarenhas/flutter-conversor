@@ -41,8 +41,48 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final realController = TextEditingController();
+  final dolarController = TextEditingController();
+  final euroController = TextEditingController();
+
   double dolar;
   double euro;
+
+  void _clearAllField() {
+    realController.text = '';
+    dolarController.text = '';
+    euroController.text = '';
+  }
+
+  void _fieldEmpty(String text) {
+    if (text.isEmpty) {
+      _clearAllField();
+      return;
+    }
+  }
+
+  void _onChanged(String type, String text) {
+    double value = double.parse(text);
+    switch (type) {
+      case 'real':
+        _fieldEmpty(text);
+        dolarController.text = (value / dolar).toStringAsFixed(2);
+        euroController.text = (value / euro).toStringAsFixed(2);
+        break;
+      case 'euro':
+        _fieldEmpty(text);
+        realController.text = (value * this.dolar).toStringAsFixed(2);
+        euroController.text = (value * this.dolar / euro).toStringAsFixed(2);
+        break;
+      case 'dolar':
+        _fieldEmpty(text);
+        realController.text = (value * this.euro).toStringAsFixed(2);
+        dolarController.text = (value * this.euro / dolar).toStringAsFixed(2);
+        break;
+      default:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,11 +124,14 @@ class _HomeState extends State<Home> {
                     children: <Widget>[
                       Icon(Icons.monetization_on,
                           size: 150.0, color: Colors.amber),
-                      buildTextField('Reais', "R\$"),
+                      buildTextField('Reais', "R\$", realController,
+                          (text) => _onChanged('real', text)),
                       Divider(),
-                      buildTextField('Dóloar', "US\$"),
+                      buildTextField('Dóloar', "US\$", dolarController,
+                          (text) => _onChanged('dolar', text)),
                       Divider(),
-                      buildTextField('Euro', "€"),
+                      buildTextField('Euro', "€", euroController,
+                          (text) => _onChanged('euro', text)),
                     ],
                   ),
                 );
@@ -98,8 +141,10 @@ class _HomeState extends State<Home> {
   }
 }
 
-Widget buildTextField(String label, String prefix) {
+Widget buildTextField(String label, String prefix,
+    TextEditingController controller, Function onChanged) {
   return TextField(
+    controller: controller,
     decoration: InputDecoration(
       labelText: label,
       labelStyle: TextStyle(color: Colors.amber),
@@ -108,5 +153,7 @@ Widget buildTextField(String label, String prefix) {
       border: OutlineInputBorder(),
     ),
     style: TextStyle(color: Colors.amber, fontSize: 18.0),
+    onChanged: onChanged,
+    keyboardType: TextInputType.numberWithOptions(decimal: true),
   );
 }
